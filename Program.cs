@@ -17,6 +17,9 @@ builder.Services.AddOpenApi();
 
 //Inyeccion de depedencias
 builder.Services.AddScoped<IStoreService, StoreService>();
+builder.Services.AddScoped<IEstudianteService, EstudianteService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 
 var app = builder.Build();
 

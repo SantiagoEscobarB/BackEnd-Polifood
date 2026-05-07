@@ -1,5 +1,6 @@
 ﻿using BackendPolifood.Interface;
 using BackendPolifood.Models.Users;
+using BackendPolifood.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPolifood.Controllers
@@ -40,6 +41,14 @@ namespace BackendPolifood.Controllers
         {
             var result = await _IVendorService.Edit(editVendor, id);
             return result ? Ok(true) : NotFound(false);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> ChangeStatus(Guid id)
+        {
+            var result = await _IVendorService.ChangeStatus(id);
+            var isActive = result == 1 ? "Active" : "Not Active";
+            return Ok(isActive);
         }
         public IActionResult Index()
         {

@@ -14,7 +14,7 @@ namespace BackendPolifood.Service
         }
         public async Task<List<Admin>> GetAll()
         {
-            return await _context.Admins.ToListAsync();
+            return await _context.Admins.Where(a => a.active == 1).ToListAsync();
         }
         public async Task<Admin> GetById(Guid id)
         {

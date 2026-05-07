@@ -43,6 +43,14 @@ namespace BackendPolifood.Controllers
             var result = await _IEstudianteService.Edit(editStore, id);
             return result ? Ok(true) : NotFound(false);
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> ChangeStatus(Guid id)
+        {
+            var result = await _IEstudianteService.ChangeStatus(id);
+            var isActive = result == 1 ? "Active" : "Not Active";
+            return Ok(isActive);
+        }
         public IActionResult Index()
         {
             return View();

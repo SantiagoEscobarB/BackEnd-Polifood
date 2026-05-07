@@ -1,11 +1,12 @@
 ﻿using BackendPolifood.DAO;
+using BackendPolifood.Interface;
 using BackendPolifood.Models;
 using BackendPolifood.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendPolifood.Service
 {
-    public class EstudianteService
+    public class EstudianteService : IEstudianteService
     {
         private readonly ApplicationDbContext _context;
         public EstudianteService(ApplicationDbContext context)
@@ -14,7 +15,7 @@ namespace BackendPolifood.Service
         }
         public async Task<List<Estudiante>> GetAll()
         {
-            return await _context.Estudiantes.ToListAsync();
+            return await _context.Estudiantes.Where(e => e.active == 1).ToListAsync(); ;
         }
         public async Task<Estudiante> GetById(Guid id)
         {
@@ -43,7 +44,7 @@ namespace BackendPolifood.Service
         }
         public async Task<int> ChangeStatus(Guid id)
         {
-            var result = await _context.Admins.FindAsync(id);
+            var result = await _context.Estudiantes.FindAsync(id);
             if (result == null) return -1;
             result.active = result.active == 1 ? 0 : 1;
             await _context.SaveChangesAsync();

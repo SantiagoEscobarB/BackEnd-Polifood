@@ -1,10 +1,11 @@
 ﻿using BackendPolifood.DAO;
+using BackendPolifood.Interface;
 using BackendPolifood.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendPolifood.Service
 {
-    public class VendorService
+    public class VendorService : IVendorService
     {
         private readonly ApplicationDbContext _context;
         public VendorService(ApplicationDbContext context)
@@ -13,7 +14,7 @@ namespace BackendPolifood.Service
         }
         public async Task<List<Vendor>> GetAll()
         {
-            return await _context.Vendors.ToListAsync();
+            return await _context.Vendors.Where(v => v.active == 1).ToListAsync(); ;
         }
         public async Task<Vendor> GetById(Guid id)
         {
@@ -44,7 +45,7 @@ namespace BackendPolifood.Service
 
         public async Task<int> ChangeStatus(Guid id)
         {
-            var result = await _context.Admins.FindAsync(id);
+            var result = await _context.Vendors.FindAsync(id);
             if (result == null) return -1;
             result.active = result.active == 1 ? 0 : 1;
             await _context.SaveChangesAsync();
