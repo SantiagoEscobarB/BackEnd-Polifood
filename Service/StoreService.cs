@@ -51,8 +51,6 @@ namespace BackendPolifood.Service
             result.available = result.available == 1 ? 0 : 1;
             await _context.SaveChangesAsync();
             return result.available;
-
-
         }
     }
 }

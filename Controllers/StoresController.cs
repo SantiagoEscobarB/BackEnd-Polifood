@@ -14,14 +14,13 @@ namespace BackendPolifood.Controllers
         public StoresController(IStoreService storeService)
         {
             _IStoreService = storeService;
-
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _IStoreServices.GetAll());
+            return Ok(await _IStoreService.GetAll());
         }
 
         [HttpGet("{id}")]
@@ -34,7 +33,7 @@ namespace BackendPolifood.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Store newStore)
         {
-            var createdStore = await _IStoreServices.Create(newStore);
+            var createdStore = await _IStoreService.Create(newStore);
             return CreatedAtAction(nameof(GetById), new { id = newStore.storeId }, newStore);
         }
 
