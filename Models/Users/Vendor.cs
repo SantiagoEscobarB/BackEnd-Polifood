@@ -1,0 +1,20 @@
+﻿using BackendPolifood.Models.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BackendPolifood.Models.Users
+{
+    public class Vendor : User
+    {
+        [Required]
+        public Guid storeId { get; set; }
+        [ForeignKey("storeId")]
+        public Store? Store { get; set; }
+
+        public Vendor(string nombre, Guid storeId)
+            : base(nombre, UserRoles.VENDOR)
+        {
+            this.storeId = storeId;
+        }
+    }
+}

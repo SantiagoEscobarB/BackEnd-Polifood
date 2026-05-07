@@ -1,10 +1,9 @@
 ﻿using BackendPolifood.DAO;
 using BackendPolifood.Interface;
-using BackendPolifood.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using BackendPolifood.Models;  
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Identity.Client;
+
+
 
 namespace BackendPolifood.Service
 {
@@ -51,8 +50,6 @@ namespace BackendPolifood.Service
             result.available = result.available == 1 ? 0 : 1;
             await _context.SaveChangesAsync();
             return result.available;
-
-
         }
     }
 }
