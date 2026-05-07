@@ -1,12 +1,14 @@
 ﻿using BackendPolifood.Interface;
 using BackendPolifood.Models.Users;
 using BackendPolifood.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPolifood.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "ADMIN")]
     public class AdminController : Controller
     {
         private readonly IAdminService _IAdminService;
@@ -33,7 +35,7 @@ namespace BackendPolifood.Controllers
         public async Task<IActionResult> Create([FromBody] Admin newAdmin)
         {
             var createdEstudiante = await _IAdminService.Create(newAdmin);
-            return CreatedAtAction(nameof(GetById), new { id = newAdmin.userId }, newAdmin);
+            return CreatedAtAction(nameof(GetById), new { id = newAdmin.Id }, newAdmin);
         }
 
         [HttpPut("{id}")]
@@ -47,6 +49,7 @@ namespace BackendPolifood.Controllers
         public async Task<IActionResult> ChangeStatus(Guid id)
         {
             var result = await _IAdminService.ChangeStatus(id);
+            if (result == -1) return NotFound(id);
             var isActive = result == 1 ? "Active" : "Not Active";
             return Ok(isActive);
         }

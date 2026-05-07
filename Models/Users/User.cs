@@ -1,35 +1,24 @@
 ﻿using BackendPolifood.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackendPolifood.Models.Users
 {
-    public abstract class User
+    public abstract class User : IdentityUser
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid userId { get; set; }
         [Required]
         public string nombre { get; set; }
         [Required]
         public UserRoles userRole { get; set; }
-        [Required]
-        [EmailAddress]
-        public string email {  get; set; }
-        [Required]
-        [MinLength(12)]
-        public string password { get; set; }
-        [Required]
         public int active { get; set; } = 1;
 
-        protected User(string name, string pass, string email, UserRoles rol, int active)
+        protected User(string nombre, UserRoles rol)
         {
-            this.email = email;
-            this.nombre = name;
-            this.password = pass;
+            this.nombre = nombre;
             this.userRole = rol;
-            this.active = active;
+            this.UserName = nombre;
         }
     }
 }

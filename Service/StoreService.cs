@@ -1,10 +1,9 @@
 ﻿using BackendPolifood.DAO;
 using BackendPolifood.Interface;
-using BackendPolifood.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using BackendPolifood.Models;  
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Identity.Client;
+
+
 
 namespace BackendPolifood.Service
 {

@@ -11,8 +11,8 @@ namespace BackendPolifood.Models.Users
         [ForeignKey("storeId")]
         public Store? Store { get; set; }
 
-        public Vendor(string nombre, string password, string email, Guid storeId, int active)
-            : base(nombre, password, email, UserRoles.VENDOR, active)
+        public Vendor(string nombre, Guid storeId)
+            : base(nombre, UserRoles.VENDOR)
         {
             this.storeId = storeId;
         }

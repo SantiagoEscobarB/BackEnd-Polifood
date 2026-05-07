@@ -1,5 +1,6 @@
 ﻿using BackendPolifood.Interface;
 using BackendPolifood.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,6 +8,8 @@ namespace BackendPolifood.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+
     public class StoresController : Controller
     {
         private readonly IStoreService _IStoreService;
@@ -18,12 +21,14 @@ namespace BackendPolifood.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _IStoreService.GetAll());
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _IStoreService.GetById(id);
@@ -31,6 +36,7 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Create([FromBody] Store newStore)
         {
             var createdStore = await _IStoreService.Create(newStore);
@@ -38,6 +44,7 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "ADMIN,VENDOR")]
         public async Task<IActionResult> Edit(Guid id, [FromBody] Store editStore)
         {
             var result = await _IStoreService.Edit(editStore, id);
@@ -45,6 +52,7 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ChangeStatus(Guid id)
         {
             var result = await _IStoreService.ChangeStatus(id);

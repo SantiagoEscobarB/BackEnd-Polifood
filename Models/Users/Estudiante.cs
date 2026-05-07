@@ -4,8 +4,8 @@ namespace BackendPolifood.Models.Users
 {
     public class Estudiante : User
     {
-        public Estudiante(string nombre, string password, string email, int active)
-            : base(nombre, password, email, UserRoles.ESTUDIANTE, active)
+        public Estudiante(string nombre)
+            : base(nombre, UserRoles.ESTUDIANTE)
         {
         }
     }

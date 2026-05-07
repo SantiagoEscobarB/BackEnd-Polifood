@@ -36,9 +36,7 @@ namespace BackendPolifood.Service
             if (result == null) return false;
 
             result.nombre = estudiante.nombre;
-            result.email = estudiante.email;
-            result.password = estudiante.password;
-
+            result.Email = estudiante.Email;
             await _context.SaveChangesAsync();
             return true;
         }

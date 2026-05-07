@@ -35,8 +35,7 @@ namespace BackendPolifood.Service
             if (result == null) return false;
 
             result.nombre = vendor.nombre;
-            result.email = vendor.email;
-            result.password = vendor.password;
+            result.Email = vendor.Email;
             result.storeId = vendor.storeId;
 
             await _context.SaveChangesAsync();
