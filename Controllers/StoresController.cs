@@ -9,11 +9,11 @@ namespace BackendPolifood.Controllers
     [Route("api/[controller]")]
     public class StoresController : Controller
     {
-        private readonly IStoreService _IStoreServices;
+        private readonly IStoreService _IStoreService;
 
         public StoresController(IStoreService storeService)
         {
-            _IStoreServices = storeService;
+            _IStoreService = storeService;
 
         }
 
@@ -27,7 +27,7 @@ namespace BackendPolifood.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _IStoreServices.GetById(id);
+            var result = await _IStoreService.GetById(id);
             return result != null ? Ok(result) : NotFound(); 
         }
 
@@ -41,14 +41,14 @@ namespace BackendPolifood.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(Guid id, [FromBody] Store editStore)
         {
-            var result = await _IStoreServices.Edit(editStore, id);
+            var result = await _IStoreService.Edit(editStore, id);
             return result ? Ok(true) : NotFound(false);
         }
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> ChangeStatus(Guid id)
         {
-            var result = await _IStoreServices.ChangeStatus(id);
+            var result = await _IStoreService.ChangeStatus(id);
             var isAvailable = result == 1 ? "Available" : "Not Available";
             return Ok(isAvailable);
         }
