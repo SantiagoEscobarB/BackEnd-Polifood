@@ -3,6 +3,7 @@ using BackendPolifood.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BackendPolifood.Models.Products;
 
 namespace BackendPolifood.DAO
 {
@@ -16,5 +17,6 @@ namespace BackendPolifood.DAO
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }
