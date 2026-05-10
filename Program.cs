@@ -26,6 +26,7 @@ builder.Services.AddScoped<IEstudianteService, EstudianteService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 //Gestion de Roles y Users
 builder.Services.AddIdentity<User, IdentityRole>()
