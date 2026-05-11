@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BackendPolifood.Models.Orders;
 
 namespace BackendPolifood.Models.Products
 {
@@ -28,8 +29,13 @@ namespace BackendPolifood.Models.Products
         [Required]
         public Guid storeId { get; set; }
 
+        [ForeignKey("storeId")]
+        public Store? store { get; set; }
+
         public bool isAvailable { get; set; } = true;
 
         public int isActive { get; set; } = 1;
+
+        public List<OrderItem> orderItems { get; set; } = new();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using BackendPolifood.Models.Products;
 
 namespace BackendPolifood.Models.Orders
 {
@@ -17,7 +18,10 @@ namespace BackendPolifood.Models.Orders
         public Order? order { get; set; }
 
         [Required]
-        public string productId { get; set; } = string.Empty;
+        public Guid productId { get; set; }
+
+        [ForeignKey("productId")]
+        public Product? product { get; set; }
 
         [Required]
         public string productName { get; set; } = string.Empty;
