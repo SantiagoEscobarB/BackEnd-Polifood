@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BackendPolifood.Models.Users;
 
 namespace BackendPolifood.Models.Orders
 {
@@ -12,8 +13,14 @@ namespace BackendPolifood.Models.Orders
         [Required]
         public string studentId { get; set; } = string.Empty;
 
+        [ForeignKey("studentId")]
+        public User? student { get; set; }
+
         [Required]
         public Guid storeId { get; set; }
+
+        [ForeignKey("storeId")]
+        public Store? store { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
@@ -27,6 +34,6 @@ namespace BackendPolifood.Models.Orders
 
         public int isActive { get; set; } = 1;
 
-        public List<OrderItem> items { get; set; } = new List<OrderItem>();
+        public List<OrderItem> items { get; set; } = new();
     }
 }
