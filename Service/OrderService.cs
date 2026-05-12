@@ -1,5 +1,6 @@
 ﻿using BackendPolifood.DAO;
 using BackendPolifood.Interface;
+using BackendPolifood.Models.DTOs;
 using BackendPolifood.Models.Orders;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,48 +15,52 @@ namespace BackendPolifood.Service
             _context = context;
         }
 
-        public async Task<List<Order>> GetAll()
+        public async Task<List<OrderResponseDTO>> GetAll()
         {
             return await _context.Orders
-                .Include(o => o.store)
-                .Include(o => o.student)
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
                 .Where(o => o.isActive == 1)
+                .Select(o => MapToDTO(o))
                 .ToListAsync();
         }
 
-        public async Task<Order?> GetById(Guid id)
+        public async Task<OrderResponseDTO?> GetById(Guid id)
         {
-            return await _context.Orders
-                .Include(o => o.store)
-                .Include(o => o.student)
+            var order = await _context.Orders
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
                 .FirstOrDefaultAsync(o => o.orderId == id && o.isActive == 1);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            return MapToDTO(order);
         }
 
-        public async Task<List<Order>> GetByStudentId(string studentId)
+        public async Task<List<OrderResponseDTO>> GetByStudentId(string studentId)
         {
             return await _context.Orders
-                .Include(o => o.store)
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
                 .Where(o => o.studentId == studentId && o.isActive == 1)
+                .Select(o => MapToDTO(o))
                 .ToListAsync();
         }
 
-        public async Task<List<Order>> GetByStoreId(Guid storeId)
+        public async Task<List<OrderResponseDTO>> GetByStoreId(Guid storeId)
         {
             return await _context.Orders
-                .Include(o => o.student)
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
                 .Where(o => o.storeId == storeId && o.isActive == 1)
+                .Select(o => MapToDTO(o))
                 .ToListAsync();
         }
 
-        public async Task<Order> Create(Order newOrder)
+        public async Task<OrderResponseDTO> Create(OrderCreateDTO newOrder)
         {
             var student = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == newOrder.studentId && u.active == 1);
@@ -78,11 +83,17 @@ namespace BackendPolifood.Service
                 throw new Exception("La orden debe tener al menos un producto");
             }
 
-            newOrder.orderId = Guid.NewGuid();
-            newOrder.createdAt = DateTime.Now;
-            newOrder.status = OrderStatus.RECIBIDO;
-            newOrder.isActive = 1;
-            newOrder.total = 0;
+            var order = new Order
+            {
+                orderId = Guid.NewGuid(),
+                studentId = newOrder.studentId,
+                storeId = newOrder.storeId,
+                createdAt = DateTime.Now,
+                status = OrderStatus.RECIBIDO,
+                isActive = 1,
+                total = 0,
+                items = new List<OrderItem>()
+            };
 
             foreach (var item in newOrder.items)
             {
@@ -98,18 +109,34 @@ namespace BackendPolifood.Service
                     throw new Exception("El producto no existe, no pertenece a la tienda o no está disponible");
                 }
 
-                item.orderItemId = Guid.NewGuid();
-                item.orderId = newOrder.orderId;
-                item.productName = product.name;
-                item.price = product.price;
+                if (item.quantity <= 0)
+                {
+                    throw new Exception("La cantidad del producto debe ser mayor a cero");
+                }
 
-                newOrder.total += product.price * item.quantity;
+                var orderItem = new OrderItem
+                {
+                    orderItemId = Guid.NewGuid(),
+                    orderId = order.orderId,
+                    productId = product.productId,
+                    productName = product.name,
+                    quantity = item.quantity,
+                    price = product.price
+                };
+
+                order.items.Add(orderItem);
+                order.total += product.price * item.quantity;
             }
 
-            _context.Orders.Add(newOrder);
+            _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            return await GetById(newOrder.orderId) ?? newOrder;
+            var createdOrder = await _context.Orders
+                .Include(o => o.items)
+                    .ThenInclude(i => i.product)
+                .FirstOrDefaultAsync(o => o.orderId == order.orderId);
+
+            return MapToDTO(createdOrder!);
         }
 
         public async Task<bool> ChangeStatus(Guid id, OrderStatus status)
@@ -140,6 +167,27 @@ namespace BackendPolifood.Service
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        private static OrderResponseDTO MapToDTO(Order order)
+        {
+            return new OrderResponseDTO
+            {
+                orderId = order.orderId,
+                studentId = order.studentId,
+                storeId = order.storeId,
+                total = order.total,
+                etaMinutes = order.etaMinutes,
+                status = order.status.ToString(),
+                createdAt = order.createdAt,
+                items = order.items.Select(i => new OrderItemResponseDTO
+                {
+                    productId = i.productId,
+                    productName = i.productName,
+                    quantity = i.quantity,
+                    price = i.price
+                }).ToList()
+            };
         }
     }
 }
