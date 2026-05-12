@@ -1,13 +1,13 @@
-﻿using BackendPolifood.Models.Users;
+using BackendPolifood.Models.DTOs;
 
 namespace BackendPolifood.Interface
 {
     public interface IVendorService
     {
-        Task<List<Vendor>> GetAll();
-        Task<Vendor> GetById(Guid id);
-        Task<Vendor> Create(Vendor vendor);
-        Task<bool> Edit(Vendor vendor, Guid id);
-        Task<int> ChangeStatus(Guid id);
+        Task<List<VendorResponseDTO>> GetAll();
+        Task<VendorResponseDTO?> GetById(string id);
+        Task<VendorResponseDTO> Create(VendorCreateDTO dto);
+        Task<bool> Edit(VendorUpdateDTO dto, string id);
+        Task<int> ChangeStatus(string id);
     }
 }

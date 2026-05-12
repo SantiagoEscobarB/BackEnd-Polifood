@@ -1,5 +1,6 @@
 ﻿using BackendPolifood.DAO;
 using BackendPolifood.Interface;
+using BackendPolifood.Models.DTOs;
 using BackendPolifood.Models.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,64 +15,166 @@ namespace BackendPolifood.Service
             _context = context;
         }
 
-        public async Task<List<Product>> GetAll()
+        public async Task<List<ProductResponseDTO>> GetAll()
         {
             return await _context.Products
                 .Where(p => p.isActive == 1)
+                .Select(p => new ProductResponseDTO
+                {
+                    productId = p.productId,
+                    name = p.name,
+                    description = p.description,
+                    price = p.price,
+                    imageUrl = p.imageUrl,
+                    category = p.category,
+                    storeId = p.storeId,
+                    isAvailable = p.isAvailable,
+                    isActive = p.isActive
+                })
                 .ToListAsync();
         }
 
-        public async Task<Product?> GetById(Guid id)
+        public async Task<ProductResponseDTO?> GetById(Guid id)
         {
             return await _context.Products
-                .FirstOrDefaultAsync(p => p.productId == id && p.isActive == 1);
+                .Where(p => p.productId == id && p.isActive == 1)
+                .Select(p => new ProductResponseDTO
+                {
+                    productId = p.productId,
+                    name = p.name,
+                    description = p.description,
+                    price = p.price,
+                    imageUrl = p.imageUrl,
+                    category = p.category,
+                    storeId = p.storeId,
+                    isAvailable = p.isAvailable,
+                    isActive = p.isActive
+                })
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Product>> GetByStoreId(Guid storeId)
+        public async Task<List<ProductResponseDTO>> GetByStoreId(Guid storeId)
         {
             return await _context.Products
                 .Where(p => p.storeId == storeId && p.isActive == 1)
+                .Select(p => new ProductResponseDTO
+                {
+                    productId = p.productId,
+                    name = p.name,
+                    description = p.description,
+                    price = p.price,
+                    imageUrl = p.imageUrl,
+                    category = p.category,
+                    storeId = p.storeId,
+                    isAvailable = p.isAvailable,
+                    isActive = p.isActive
+                })
                 .ToListAsync();
         }
 
-        public async Task<List<Product>> GetByCategory(string category)
+        public async Task<List<ProductResponseDTO>> GetByCategory(string category)
         {
             return await _context.Products
                 .Where(p => p.category == category && p.isActive == 1)
+                .Select(p => new ProductResponseDTO
+                {
+                    productId = p.productId,
+                    name = p.name,
+                    description = p.description,
+                    price = p.price,
+                    imageUrl = p.imageUrl,
+                    category = p.category,
+                    storeId = p.storeId,
+                    isAvailable = p.isAvailable,
+                    isActive = p.isActive
+                })
                 .ToListAsync();
         }
 
-        public async Task<Product> Create(Product newProduct)
+        public async Task<ProductResponseDTO> Create(ProductCreateDTO dto)
         {
-            _context.Products.Add(newProduct);
+            var store = await _context.Stores
+                .FirstOrDefaultAsync(s => s.storeId == dto.storeId && s.available == 1);
+
+            if (store == null)
+            {
+                throw new Exception("La tienda no existe o no está disponible");
+            }
+
+            var product = new Product
+            {
+                name = dto.name,
+                description = dto.description,
+                price = dto.price,
+                imageUrl = dto.imageUrl,
+                category = dto.category,
+                storeId = dto.storeId,
+                isAvailable = dto.isAvailable,
+                isActive = 1
+            };
+
+            _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return newProduct;
+            return new ProductResponseDTO
+            {
+                productId = product.productId,
+                name = product.name,
+                description = product.description,
+                price = product.price,
+                imageUrl = product.imageUrl,
+                category = product.category,
+                storeId = product.storeId,
+                isAvailable = product.isAvailable,
+                isActive = product.isActive
+            };
         }
 
-        public async Task<bool> Update(Guid id, Product product)
+        public async Task<bool> Update(Guid id, ProductUpdateDTO dto)
         {
-            var existingProduct = await _context.Products.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
 
-            if (existingProduct == null || existingProduct.isActive == 0)
+            if (product == null || product.isActive == 0)
             {
                 return false;
             }
 
-            existingProduct.name = product.name;
-            existingProduct.description = product.description;
-            existingProduct.price = product.price;
-            existingProduct.imageUrl = product.imageUrl;
-            existingProduct.category = product.category;
-            existingProduct.storeId = product.storeId;
-            existingProduct.isAvailable = product.isAvailable;
+            if (dto.name != null)
+            {
+                product.name = dto.name;
+            }
+
+            if (dto.description != null)
+            {
+                product.description = dto.description;
+            }
+
+            if (dto.price != null)
+            {
+                product.price = dto.price.Value;
+            }
+
+            if (dto.imageUrl != null)
+            {
+                product.imageUrl = dto.imageUrl;
+            }
+
+            if (dto.category != null)
+            {
+                product.category = dto.category;
+            }
+
+            if (dto.isAvailable != null)
+            {
+                product.isAvailable = dto.isAvailable.Value;
+            }
 
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> ChangeAvailability(Guid id)
+        public async Task<bool> ToggleAvailability(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
 

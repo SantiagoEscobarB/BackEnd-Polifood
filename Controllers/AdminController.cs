@@ -1,6 +1,5 @@
-﻿using BackendPolifood.Interface;
-using BackendPolifood.Models.Users;
-using BackendPolifood.Service;
+using BackendPolifood.Interface;
+using BackendPolifood.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,7 @@ namespace BackendPolifood.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "ADMIN")]
-    public class AdminController : Controller
+    public class AdminController : ControllerBase
     {
         private readonly IAdminService _IAdminService;
 
@@ -25,37 +24,40 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(string id)
         {
             var result = await _IAdminService.GetById(id);
             return result != null ? Ok(result) : NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Admin newAdmin)
+        public async Task<IActionResult> Create([FromBody] UserCreateDTO dto)
         {
-            var createdEstudiante = await _IAdminService.Create(newAdmin);
-            return CreatedAtAction(nameof(GetById), new { id = newAdmin.Id }, newAdmin);
+            try
+            {
+                var created = await _IAdminService.Create(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.id }, created);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(Guid id, [FromBody] Admin editAdmin)
+        public async Task<IActionResult> Edit(string id, [FromBody] UserUpdateDTO dto)
         {
-            var result = await _IAdminService.Edit(editAdmin, id);
+            var result = await _IAdminService.Edit(dto, id);
             return result ? Ok(true) : NotFound(false);
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> ChangeStatus(Guid id)
+        public async Task<IActionResult> ChangeStatus(string id)
         {
             var result = await _IAdminService.ChangeStatus(id);
-            if (result == -1) return NotFound(id);
+            if (result == -1) return NotFound();
             var isActive = result == 1 ? "Active" : "Not Active";
             return Ok(isActive);
-        }
-        public IActionResult Index()
-        {
-            return View();
         }
     }
 }

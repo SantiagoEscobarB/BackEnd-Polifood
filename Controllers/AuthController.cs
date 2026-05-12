@@ -1,5 +1,6 @@
 ﻿using BackendPolifood.Interface;
 using BackendPolifood.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendPolifood.Controllers
@@ -26,6 +27,7 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPost("register/vendor")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> RegisterVendor([FromBody] RegisterVendorDTO dto)
         {
             var token = await _authService.RegisterVendor(dto);
@@ -34,6 +36,8 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPost("register/admin")]
+        [AllowAnonymous]
+        //Lo ideal seria tener un admin predeterminado pero por ahora puede seer asi para probar
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDTO dto)
         {
             var token = await _authService.RegisterAdmin(dto);

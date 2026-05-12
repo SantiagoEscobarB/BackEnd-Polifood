@@ -1,15 +1,14 @@
-﻿using BackendPolifood.Interface;
-using BackendPolifood.Models;
+using BackendPolifood.Interface;
+using BackendPolifood.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace BackendPolifood.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-
     public class StoresController : Controller
     {
         private readonly IStoreService _IStoreService;
@@ -18,7 +17,6 @@ namespace BackendPolifood.Controllers
         {
             _IStoreService = storeService;
         }
-
 
         [HttpGet]
         [AllowAnonymous]
@@ -32,22 +30,29 @@ namespace BackendPolifood.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _IStoreService.GetById(id);
-            return result != null ? Ok(result) : NotFound(); 
+            return result != null ? Ok(result) : NotFound();
         }
 
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> Create([FromBody] Store newStore)
+        public async Task<IActionResult> Create([FromBody] StoreCreateDTO dto)
         {
-            var createdStore = await _IStoreService.Create(newStore);
-            return CreatedAtAction(nameof(GetById), new { id = newStore.storeId }, newStore);
+            var created = await _IStoreService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.storeId }, created);
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "ADMIN,VENDOR")]
-        public async Task<IActionResult> Edit(Guid id, [FromBody] Store editStore)
+        public async Task<IActionResult> Edit(Guid id, [FromBody] StoreUpdateDTO dto)
         {
-            var result = await _IStoreService.Edit(editStore, id);
+            if (User.IsInRole("VENDOR"))
+            {
+                var storeIdClaim = User.FindFirstValue("storeId");
+                if (!Guid.TryParse(storeIdClaim, out var vendorStoreId) || vendorStoreId != id)
+                    return Forbid();
+            }
+
+            var result = await _IStoreService.Edit(dto, id);
             return result ? Ok(true) : NotFound(false);
         }
 
@@ -56,14 +61,9 @@ namespace BackendPolifood.Controllers
         public async Task<IActionResult> ChangeStatus(Guid id)
         {
             var result = await _IStoreService.ChangeStatus(id);
+            if (result == -1) return NotFound();
             var isAvailable = result == 1 ? "Available" : "Not Available";
             return Ok(isAvailable);
-        }
-       
-        
-        public IActionResult Index()
-        {
-            return View();
         }
     }
 }

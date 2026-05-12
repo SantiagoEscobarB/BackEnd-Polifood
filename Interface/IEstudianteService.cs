@@ -1,14 +1,13 @@
-﻿using BackendPolifood.Models;
-using BackendPolifood.Models.Users;
+using BackendPolifood.Models.DTOs;
 
 namespace BackendPolifood.Interface
 {
     public interface IEstudianteService
     {
-        Task<List<Estudiante>> GetAll();
-        Task<Estudiante> GetById(Guid id);
-        Task<Estudiante> Create(Estudiante estudiante);
-        Task<bool> Edit(Estudiante estudiante, Guid id);
-        Task<int> ChangeStatus(Guid id);
+        Task<List<UserResponseDTO>> GetAll();
+        Task<UserResponseDTO?> GetById(string id);
+        Task<UserResponseDTO> Create(UserCreateDTO dto);
+        Task<bool> Edit(UserUpdateDTO dto, string id);
+        Task<int> ChangeStatus(string id);
     }
 }

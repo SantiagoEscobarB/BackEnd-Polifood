@@ -1,5 +1,4 @@
 ﻿using BackendPolifood.Interface;
-using BackendPolifood.Interface;
 using BackendPolifood.Models;
 using BackendPolifood.Models.DTOs;
 using BackendPolifood.Models.Enums;
@@ -73,13 +72,17 @@ namespace BackendPolifood.Service
 
         private string GenerarToken(User user, string role)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            if (user is Vendor vendor)
+                claims.Add(new Claim("storeId", vendor.storeId.ToString()));
+
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
@@ -88,7 +91,7 @@ namespace BackendPolifood.Service
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
-                claims: claims,
+                claims: claims.ToArray(),
                 expires: DateTime.UtcNow.AddHours(8),
                 signingCredentials: creds
             );

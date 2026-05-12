@@ -1,13 +1,13 @@
-﻿using BackendPolifood.Models;
+﻿using BackendPolifood.Models.DTOs;
 
 namespace BackendPolifood.Interface
 {
     public interface IStoreService
     {
-        Task<List<Store>> GetAll();
-        Task<Store> GetById(Guid id);
-        Task<Store> Create(Store store);
-        Task<bool> Edit(Store store, Guid id);
+        Task<List<StoreResponseDTO>> GetAll();
+        Task<StoreResponseDTO?> GetById(Guid id);
+        Task<StoreResponseDTO> Create(StoreCreateDTO dto);
+        Task<bool> Edit(StoreUpdateDTO dto, Guid id);
         Task<int> ChangeStatus(Guid id);
     }
 }
