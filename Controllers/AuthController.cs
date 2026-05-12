@@ -21,18 +21,30 @@ namespace BackendPolifood.Controllers
         [HttpPost("register/estudiante")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
         {
-            var token = await _authService.RegisterEstudiante(dto);
-            if (token == null) return BadRequest(new { message = "Error al registrar estudiante" });
-            return Ok(new { Token = token });
+            try
+            {
+                var token = await _authService.RegisterEstudiante(dto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("register/vendor")]
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> RegisterVendor([FromBody] RegisterVendorDTO dto)
         {
-            var token = await _authService.RegisterVendor(dto);
-            if (token == null) return BadRequest(new { message = "Error al registrar vendor" });
-            return Ok(new { Token = token });
+            try
+            {
+                var token = await _authService.RegisterVendor(dto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("register/admin")]
@@ -40,9 +52,15 @@ namespace BackendPolifood.Controllers
         //Lo ideal seria tener un admin predeterminado pero por ahora puede seer asi para probar
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDTO dto)
         {
-            var token = await _authService.RegisterAdmin(dto);
-            if (token == null) return BadRequest(new { message = "Error al registrar admin" });
-            return Ok(new { Token = token });
+            try
+            {
+                var token = await _authService.RegisterAdmin(dto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         //El Login se hace igual independiente del rol

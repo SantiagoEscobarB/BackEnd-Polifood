@@ -28,29 +28,27 @@ namespace BackendPolifood.Service
 
         public async Task<string?> RegisterEstudiante(RegisterDTO dto)
         {
-            var estudiante = new Estudiante(dto.nombre);
-            estudiante.Email = dto.email;
+            var estudiante = new Estudiante(dto.nombre) { Email = dto.email, UserName = dto.email };
             return await CrearUsuario(estudiante, dto.password, estudiante.userRole.ToString());
         }
 
         public async Task<string?> RegisterVendor(RegisterVendorDTO dto)
         {
-            var vendor = new Vendor(dto.nombre, dto.storeId);
-            vendor.Email = dto.email;
+            var vendor = new Vendor(dto.nombre, dto.storeId) { Email = dto.email, UserName = dto.email };
             return await CrearUsuario(vendor, dto.password, vendor.userRole.ToString());
         }
 
         public async Task<string?> RegisterAdmin(RegisterDTO dto)
         {
-            var admin = new Admin(dto.nombre);
-            admin.Email = dto.email;
+            var admin = new Admin(dto.nombre) { Email = dto.email, UserName = dto.email };
             return await CrearUsuario(admin, dto.password, admin.userRole.ToString());
         }
 
         private async Task<string?> CrearUsuario(User user, string password, string role)
         {
             var result = await _userManager.CreateAsync(user, password);
-            if (!result.Succeeded) return null;
+            if (!result.Succeeded)
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
             if (!await _roleManager.RoleExistsAsync(role))
                 await _roleManager.CreateAsync(new IdentityRole(role));
