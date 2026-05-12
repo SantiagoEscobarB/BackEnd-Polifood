@@ -61,6 +61,7 @@ namespace BackendPolifood.Service
                 .FirstOrDefaultAsync(u => u.Id == newOrder.studentId && u.active == 1);
 
             if (student == null)
+            if (student == null)
             {
                 throw new Exception("El estudiante no existe o no está activo");
             }
