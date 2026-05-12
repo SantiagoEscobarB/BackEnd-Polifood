@@ -1,6 +1,5 @@
 ﻿using BackendPolifood.Interface;
 using BackendPolifood.Models.DTOs;
-using BackendPolifood.Models.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,9 +62,9 @@ namespace BackendPolifood.Controllers
 
         [Authorize(Roles = "ADMIN,VENDOR")]
         [HttpPatch("{id}/status")]
-        public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] OrderStatus status)
+        public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] OrderStatusUpdateDTO dto)
         {
-            var result = await _IOrderService.ChangeStatus(id, status);
+            var result = await _IOrderService.ChangeStatus(id, dto);
 
             if (!result)
             {

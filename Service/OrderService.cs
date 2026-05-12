@@ -139,7 +139,7 @@ namespace BackendPolifood.Service
             return MapToDTO(createdOrder!);
         }
 
-        public async Task<bool> ChangeStatus(Guid id, OrderStatus status)
+        public async Task<bool> ChangeStatus(Guid id, OrderStatusUpdateDTO dto)
         {
             var order = await _context.Orders.FindAsync(id);
 
@@ -148,7 +148,7 @@ namespace BackendPolifood.Service
                 return false;
             }
 
-            order.status = status;
+            order.status = dto.status;
             await _context.SaveChangesAsync();
 
             return true;

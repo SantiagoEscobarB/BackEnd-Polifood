@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BackendPolifood.Models.Orders;
 
 namespace BackendPolifood.Models.DTOs
 {
@@ -21,6 +22,12 @@ namespace BackendPolifood.Models.DTOs
 
         [Required]
         public List<OrderItemCreateDTO> items { get; set; } = new();
+    }
+
+    public class OrderStatusUpdateDTO
+    {
+        [Required]
+        public OrderStatus status { get; set; }
     }
 
     public class OrderItemResponseDTO

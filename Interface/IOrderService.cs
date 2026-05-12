@@ -1,5 +1,4 @@
 ﻿using BackendPolifood.Models.DTOs;
-using BackendPolifood.Models.Orders;
 
 namespace BackendPolifood.Interface
 {
@@ -15,7 +14,7 @@ namespace BackendPolifood.Interface
 
         Task<OrderResponseDTO> Create(OrderCreateDTO newOrder);
 
-        Task<bool> ChangeStatus(Guid id, OrderStatus status);
+        Task<bool> ChangeStatus(Guid id, OrderStatusUpdateDTO dto);
 
         Task<bool> Delete(Guid id);
     }
