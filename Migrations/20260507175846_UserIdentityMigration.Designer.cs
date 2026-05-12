@@ -4,6 +4,7 @@ using BackendPolifood.DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendPolifood.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507175846_UserIdentityMigration")]
+    partial class UserIdentityMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,115 +24,6 @@ namespace BackendPolifood.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BackendPolifood.Models.Orders.Order", b =>
-                {
-                    b.Property<Guid>("orderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("etaMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("isActive")
-                        .HasColumnType("int");
-
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("storeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("studentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("orderId");
-
-                    b.HasIndex("storeId");
-
-                    b.HasIndex("studentId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Orders.OrderItem", b =>
-                {
-                    b.Property<Guid>("orderItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("orderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("productId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("productName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("orderItemId");
-
-                    b.HasIndex("orderId");
-
-                    b.HasIndex("productId");
-
-                    b.ToTable("OrderItems");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Products.Product", b =>
-                {
-                    b.Property<Guid>("productId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("imageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("isActive")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isAvailable")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("storeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("productId");
-
-                    b.HasIndex("storeId");
-
-                    b.ToTable("Products");
-                });
 
             modelBuilder.Entity("BackendPolifood.Models.Store", b =>
                 {
@@ -396,55 +290,6 @@ namespace BackendPolifood.Migrations
                     b.HasDiscriminator().HasValue("Vendor");
                 });
 
-            modelBuilder.Entity("BackendPolifood.Models.Orders.Order", b =>
-                {
-                    b.HasOne("BackendPolifood.Models.Store", "store")
-                        .WithMany("orders")
-                        .HasForeignKey("storeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BackendPolifood.Models.Users.User", "student")
-                        .WithMany()
-                        .HasForeignKey("studentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("store");
-
-                    b.Navigation("student");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Orders.OrderItem", b =>
-                {
-                    b.HasOne("BackendPolifood.Models.Orders.Order", "order")
-                        .WithMany("items")
-                        .HasForeignKey("orderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackendPolifood.Models.Products.Product", "product")
-                        .WithMany("orderItems")
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("order");
-
-                    b.Navigation("product");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Products.Product", b =>
-                {
-                    b.HasOne("BackendPolifood.Models.Store", "store")
-                        .WithMany("products")
-                        .HasForeignKey("storeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("store");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -505,23 +350,6 @@ namespace BackendPolifood.Migrations
                         .IsRequired();
 
                     b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Orders.Order", b =>
-                {
-                    b.Navigation("items");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Products.Product", b =>
-                {
-                    b.Navigation("orderItems");
-                });
-
-            modelBuilder.Entity("BackendPolifood.Models.Store", b =>
-                {
-                    b.Navigation("orders");
-
-                    b.Navigation("products");
                 });
 #pragma warning restore 612, 618
         }
