@@ -85,6 +85,7 @@ namespace BackendPolifood.Service
                 items = new List<OrderItem>()
             };
 
+            int maxPrepTime = 0;
             foreach (var item in newOrder.items)
             {
                 var product = await _context.Products
@@ -111,7 +112,11 @@ namespace BackendPolifood.Service
 
                 order.items.Add(orderItem);
                 order.total += product.price * item.quantity;
+                if (product.prepTimeMinutes > maxPrepTime)
+                    maxPrepTime = product.prepTimeMinutes;
             }
+
+            order.etaMinutes = maxPrepTime;
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();

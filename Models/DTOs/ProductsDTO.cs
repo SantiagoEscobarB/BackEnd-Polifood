@@ -13,8 +13,7 @@ namespace BackendPolifood.Models.DTOs
         [Required]
         public decimal price { get; set; }
 
-        [Required]
-        public string imageUrl { get; set; }
+        public string imageUrl { get; set; } = string.Empty;
 
         [Required]
         public string category { get; set; }
@@ -23,6 +22,8 @@ namespace BackendPolifood.Models.DTOs
         public Guid storeId { get; set; }
 
         public bool isAvailable { get; set; } = true;
+        public int prepTimeMinutes { get; set; } = 15;
+
     }
 
     public class ProductUpdateDTO
@@ -38,6 +39,8 @@ namespace BackendPolifood.Models.DTOs
         public string? category { get; set; }
 
         public bool? isAvailable { get; set; }
+        public int? prepTimeMinutes { get; set; }
+
     }
 
     public class ProductResponseDTO
@@ -59,5 +62,7 @@ namespace BackendPolifood.Models.DTOs
         public bool isAvailable { get; set; }
 
         public int isActive { get; set; }
+        public int prepTimeMinutes { get; set; }
+
     }
 }

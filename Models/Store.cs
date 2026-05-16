@@ -16,6 +16,8 @@ namespace BackendPolifood.Models
 
         public string[] categories { get; set; }
 
+        public string logoUrl { get; set; } = string.Empty;
+
         [Required]
         public int available { get; set; } = 1;
 

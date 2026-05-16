@@ -29,7 +29,9 @@ namespace BackendPolifood.Service
                     category = p.category,
                     storeId = p.storeId,
                     isAvailable = p.isAvailable,
-                    isActive = p.isActive
+                    isActive = p.isActive,
+                    prepTimeMinutes = p.prepTimeMinutes
+
                 })
                 .ToListAsync();
         }
@@ -48,7 +50,9 @@ namespace BackendPolifood.Service
                     category = p.category,
                     storeId = p.storeId,
                     isAvailable = p.isAvailable,
-                    isActive = p.isActive
+                    isActive = p.isActive,
+                    prepTimeMinutes = p.prepTimeMinutes
+
                 })
                 .FirstOrDefaultAsync();
         }
@@ -67,7 +71,8 @@ namespace BackendPolifood.Service
                     category = p.category,
                     storeId = p.storeId,
                     isAvailable = p.isAvailable,
-                    isActive = p.isActive
+                    isActive = p.isActive,
+                    prepTimeMinutes = p.prepTimeMinutes
                 })
                 .ToListAsync();
         }
@@ -86,7 +91,8 @@ namespace BackendPolifood.Service
                     category = p.category,
                     storeId = p.storeId,
                     isAvailable = p.isAvailable,
-                    isActive = p.isActive
+                    isActive = p.isActive,
+                    prepTimeMinutes = p.prepTimeMinutes
                 })
                 .ToListAsync();
         }
@@ -110,7 +116,9 @@ namespace BackendPolifood.Service
                 category = dto.category,
                 storeId = dto.storeId,
                 isAvailable = dto.isAvailable,
-                isActive = 1
+                isActive = 1,
+                prepTimeMinutes = dto.prepTimeMinutes,
+
             };
 
             _context.Products.Add(product);
@@ -126,7 +134,9 @@ namespace BackendPolifood.Service
                 category = product.category,
                 storeId = product.storeId,
                 isAvailable = product.isAvailable,
-                isActive = product.isActive
+                isActive = product.isActive,
+                prepTimeMinutes = product.prepTimeMinutes,
+
             };
         }
 

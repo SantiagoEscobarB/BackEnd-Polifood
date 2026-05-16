@@ -26,10 +26,20 @@ namespace BackendPolifood.Service
             _config = config;
         }
 
-        public async Task<string?> RegisterEstudiante(RegisterDTO dto)
+        public async Task<AuthResponseDTO?> RegisterEstudiante(RegisterDTO dto)
         {
             var estudiante = new Estudiante(dto.nombre) { Email = dto.email, UserName = dto.email };
-            return await CrearUsuario(estudiante, dto.password, estudiante.userRole.ToString());
+            var token = await CrearUsuario(estudiante, dto.password, estudiante.userRole.ToString());
+            if (token == null) return null;
+            return new AuthResponseDTO
+            {
+                token = token,
+                id = estudiante.Id,
+                nombre = estudiante.nombre,
+                email = estudiante.Email,
+                role = estudiante.userRole.ToString(),
+                storeId = null
+            };
         }
 
         public async Task<string?> RegisterVendor(RegisterVendorDTO dto)
@@ -57,15 +67,21 @@ namespace BackendPolifood.Service
             return GenerarToken(user, role);
         }
 
-        public async Task<string?> Login(string email, string password)
+        public async Task<AuthResponseDTO?> Login(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return null;
+            if (user == null || !await _userManager.CheckPasswordAsync(user, password)) return null;
 
-            if (!await _userManager.CheckPasswordAsync(user, password)) return null;
-
-            var roles = await _userManager.GetRolesAsync(user);
-            return GenerarToken(user, roles.FirstOrDefault() ?? "");
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? "";
+            return new AuthResponseDTO
+            {
+                token = GenerarToken(user, role),
+                id = user.Id,
+                nombre = user.nombre,
+                email = user.Email,
+                role = role,
+                storeId = (user as Vendor)?.storeId.ToString()
+            };
         }
 
         private string GenerarToken(User user, string role)

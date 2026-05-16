@@ -16,7 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter()));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -54,6 +57,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddCors(options =>
+    options.AddPolicy("Frontend", p =>
+        p.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
 
@@ -65,9 +71,39 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+//Crear un admin
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string adminEmail = "admin@polifood.com";
+    string adminPassword = "Admin1234567!";
+
+        if (!await roleManager.RoleExistsAsync("ADMIN"))
+        await roleManager.CreateAsync(new IdentityRole("ADMIN"));
+
+    var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+    if (existingAdmin == null)
+    {
+        var adminUser = new Admin("Administrador")
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+            existingAdmin = adminUser;
+    }
+
+    // Asegurar que el rol esté asignado aunque el usuario ya existiera
+    if (existingAdmin != null && !await userManager.IsInRoleAsync(existingAdmin, "ADMIN"))
+        await userManager.AddToRoleAsync(existingAdmin, "ADMIN");
+}
 
 app.Run();

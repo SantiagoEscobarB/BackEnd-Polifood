@@ -35,6 +35,7 @@ namespace BackendPolifood.Service
             {
                 nombre = dto.nombre,
                 categories = dto.categories,
+                logoUrl = dto.logoUrl,
                 available = 1
             };
 
@@ -51,6 +52,7 @@ namespace BackendPolifood.Service
 
             if (dto.nombre != null) store.nombre = dto.nombre;
             if (dto.categories != null) store.categories = dto.categories;
+            if (dto.logoUrl != null) store.logoUrl = dto.logoUrl;
 
             await _context.SaveChangesAsync();
             return true;
@@ -71,7 +73,8 @@ namespace BackendPolifood.Service
             storeId = store.storeId,
             nombre = store.nombre,
             categories = store.categories,
-            available = store.available
+            available = store.available,
+            logoUrl = store.logoUrl
         };
     }
 }
