@@ -50,6 +50,7 @@ namespace BackendPolifood.Service
             return await _context.Orders
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
+                .Include(o => o.student)
                 .Where(o => o.storeId == storeId && o.isActive == 1)
                 .Select(o => MapToDTO(o))
                 .ToListAsync();
@@ -157,6 +158,8 @@ namespace BackendPolifood.Service
         {
             orderId = order.orderId,
             studentId = order.studentId,
+            studentName = order.student?.nombre ?? string.Empty,
+            studentEmail = order.student?.Email ?? string.Empty,
             storeId = order.storeId,
             total = order.total,
             etaMinutes = order.etaMinutes,

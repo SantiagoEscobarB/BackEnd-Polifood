@@ -4,7 +4,7 @@
     {
         RECIBIDO,
         PREPARANDO,
-        EN_CAMINO,
-        ENVIADO
+        LISTO,
+        ENTREGADO
     }
 }
