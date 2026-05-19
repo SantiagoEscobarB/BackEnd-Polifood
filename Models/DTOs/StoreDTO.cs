@@ -8,6 +8,8 @@ namespace BackendPolifood.Models.DTOs
         public string nombre { get; set; } = string.Empty;
 
         public string[] categories { get; set; } = [];
+
+        public string logoUrl { get; set; } = string.Empty;
     }
 
     public class StoreUpdateDTO
@@ -15,6 +17,8 @@ namespace BackendPolifood.Models.DTOs
         public string? nombre { get; set; }
 
         public string[]? categories { get; set; }
+
+        public string? logoUrl { get; set; }
     }
 
     public class StoreResponseDTO
@@ -26,5 +30,7 @@ namespace BackendPolifood.Models.DTOs
         public string[] categories { get; set; } = [];
 
         public int available { get; set; }
+
+        public string logoUrl { get; set; } = string.Empty;
     }
 }

@@ -47,6 +47,10 @@ namespace BackendPolifood.Models.DTOs
 
         public string studentId { get; set; } = string.Empty;
 
+        public string studentName { get; set; } = string.Empty;
+
+        public string studentEmail { get; set; } = string.Empty;
+
         public Guid storeId { get; set; }
 
         public decimal total { get; set; }

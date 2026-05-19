@@ -6,9 +6,9 @@ namespace BackendPolifood.Interface
     {
     public interface IAuthService
     {
-        Task<string?> RegisterEstudiante(RegisterDTO dto);
+        Task<AuthResponseDTO?> RegisterEstudiante(RegisterDTO dto);
         Task<string?> RegisterVendor(RegisterVendorDTO dto);
         Task<string?> RegisterAdmin(RegisterDTO dto);
-        Task<string?> Login(string email, string password);
+        Task<AuthResponseDTO?> Login(string email, string password);
     }
 }

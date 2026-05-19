@@ -50,6 +50,7 @@ namespace BackendPolifood.Service
             return await _context.Orders
                 .Include(o => o.items)
                     .ThenInclude(i => i.product)
+                .Include(o => o.student)
                 .Where(o => o.storeId == storeId && o.isActive == 1)
                 .Select(o => MapToDTO(o))
                 .ToListAsync();
@@ -85,6 +86,7 @@ namespace BackendPolifood.Service
                 items = new List<OrderItem>()
             };
 
+            int maxPrepTime = 0;
             foreach (var item in newOrder.items)
             {
                 var product = await _context.Products
@@ -111,7 +113,11 @@ namespace BackendPolifood.Service
 
                 order.items.Add(orderItem);
                 order.total += product.price * item.quantity;
+                if (product.prepTimeMinutes > maxPrepTime)
+                    maxPrepTime = product.prepTimeMinutes;
             }
+
+            order.etaMinutes = maxPrepTime;
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
@@ -152,6 +158,8 @@ namespace BackendPolifood.Service
         {
             orderId = order.orderId,
             studentId = order.studentId,
+            studentName = order.student?.nombre ?? string.Empty,
+            studentEmail = order.student?.Email ?? string.Empty,
             storeId = order.storeId,
             total = order.total,
             etaMinutes = order.etaMinutes,

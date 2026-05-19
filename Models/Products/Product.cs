@@ -37,5 +37,7 @@ namespace BackendPolifood.Models.Products
         public int isActive { get; set; } = 1;
 
         public List<OrderItem> orderItems { get; set; } = new();
+        public int prepTimeMinutes { get; set; } = 15;
+
     }
 }
