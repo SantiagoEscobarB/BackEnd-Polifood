@@ -23,8 +23,8 @@ namespace BackendPolifood.Controllers
         {
             try
             {
-                var token = await _authService.RegisterEstudiante(dto);
-                return Ok(new { Token = token });
+                var result = await _authService.RegisterEstudiante(dto);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -67,9 +67,9 @@ namespace BackendPolifood.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
-            var token = await _authService.Login(dto.Email, dto.Password);
-            if (token == null) return Unauthorized(new { message = "Credenciales incorrectas" });
-            return Ok(new { Token = token });
+            var result = await _authService.Login(dto.Email, dto.Password);
+            if (result == null) return Unauthorized(new { message = "Credenciales incorrectas" });
+            return Ok(result);
         }
     }
 }

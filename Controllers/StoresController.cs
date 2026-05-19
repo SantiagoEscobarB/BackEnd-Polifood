@@ -57,9 +57,16 @@ namespace BackendPolifood.Controllers
         }
 
         [HttpPatch("{id}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,VENDOR")]
         public async Task<IActionResult> ChangeStatus(Guid id)
         {
+            if (User.IsInRole("VENDOR"))
+            {
+                var storeIdClaim = User.FindFirstValue("storeId");
+                if (!Guid.TryParse(storeIdClaim, out var vendorStoreId) || vendorStoreId != id)
+                    return Forbid();
+            }
+
             var result = await _IStoreService.ChangeStatus(id);
             if (result == -1) return NotFound();
             var isAvailable = result == 1 ? "Available" : "Not Available";

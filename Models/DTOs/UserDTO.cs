@@ -2,6 +2,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackendPolifood.Models.DTOs
 {
+    public class AuthResponseDTO
+    {
+        public string token { get; set; } = string.Empty;
+        public string id { get; set; } = string.Empty;
+        public string nombre { get; set; } = string.Empty;
+        public string? email { get; set; }
+        public string role { get; set; } = string.Empty;
+        public string? storeId { get; set; }
+    }
+
     public class UserResponseDTO
     {
         public string id { get; set; } = string.Empty;
